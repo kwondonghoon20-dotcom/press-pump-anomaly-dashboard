@@ -6,10 +6,12 @@
 화면 구성은 실제 공정관리(SPC) 대시보드 스타일을 참고해, 현장 작업자가 3초 안에
 "정상/센서점검/이상" 중 무엇인지, 어느 쪽이 문제인지 한눈에 알 수 있도록 설계했다.
 """
+import glob
 import io
 import sys
 from pathlib import Path
 
+import matplotlib.font_manager as fm
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -22,6 +24,29 @@ from pdm_app import data_quality as dq
 from pdm_app import judge
 from pdm_app import loader
 from pdm_app import samples
+
+
+def _register_system_korean_fonts():
+    """클라우드(Linux) 배포 환경에서는 Windows의 맑은 고딕이 없어 그래프 한글이 깨진다.
+    packages.txt로 apt 설치한 fonts-nanum 등을 matplotlib 폰트 매니저에 직접 등록해서,
+    제출 코드의 experiment.korean_font()가 그 폰트를 바로 찾을 수 있게 한다
+    (korean_font() 자체는 수정하지 않음 — 폰트를 '설치해서 보이게' 만드는 보강 작업).
+    못 찾아도 조용히 넘어간다 (로컬 Windows에서는 애초에 필요 없음)."""
+    patterns = [
+        "/usr/share/fonts/truetype/nanum/*.ttf",
+        "/usr/share/fonts/opentype/noto/*CJK*KR*.otf",
+        "/usr/share/fonts/truetype/noto/*CJK*KR*.ttf",
+        "/usr/share/fonts/**/*Nanum*.ttf",
+    ]
+    for pat in patterns:
+        for path in glob.glob(pat, recursive=True):
+            try:
+                fm.fontManager.addfont(path)
+            except Exception:
+                pass
+
+
+_register_system_korean_fonts()
 
 st.set_page_config(page_title="프레스 유압펌프 이상 탐지", layout="wide", initial_sidebar_state="expanded")
 
