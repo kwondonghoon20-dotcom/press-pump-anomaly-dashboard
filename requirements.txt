@@ -1,0 +1,7 @@
+# 제출 코드(새 폴더/제출/소스코드/requirements.txt)와 동일한 버전 + streamlit
+numpy==2.3.5
+pandas==2.3.3
+scipy==1.16.3
+scikit-learn==1.9.0
+matplotlib==3.10.0
+streamlit==1.65.0
